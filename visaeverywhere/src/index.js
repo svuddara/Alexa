@@ -152,10 +152,10 @@ function handleCityDialogRequest(intent, session, response) {
      var pwd = intent.slots.Everywhere.value;
 
         if(pwd == "test"){
+        getFxRateResponse(intent,session,response);
         var s = "Done,A conformation email has been sent. Anything else?";
         response.ask(s);
-        //getFxRateResponse(intent,session,response);
-        //console.log("8. last...");
+        console.log("8. last...");
         }
 
 
@@ -184,6 +184,62 @@ function handleCityDialogRequest(intent, session, response) {
         response.ask(speechOutput);
         return;
 }
+
+function getFxRateResponse(intent,session, response) {
+
+    //response.tell("I'm in getFxRateResponse");
+    console.log(" 1. hey I'm in getFxRateResponse"); 
+    // Issue the request, and respond to the user
+    makeFxRequest(intent,session, function FxResponseCallback(err, highTideResponse) {
+        var speechOutput;
+
+        console.log("5. hey i'm callback");
+        if (err) {
+            speechOutput = "Sorry, Fx rate conversion failed";
+            console.log("6. hey i'm callback error");
+        } else {
+            //speechOutput = highTideResponse;
+            speechOutput = "hey I got the response";
+            console.log("6.b. hey i'm callback success");
+        }
+
+        //esponse.tellWithCard(speechOutput, "VisaEverywhere", speechOutput);
+        console.log("7. hey I'm in make makeFxRequest end....." + highTideResponse);
+    });
+}
+
+function makeFxRequest(intent,session, FxResponseCallback) {
+
+    var endpoint = 'http://api.fixer.io/latest';
+    var queryString = '?base=USD';
+     console.log("2. hey I'm before API call");
+
+    http.get(endpoint + queryString, function (res) {
+        var noaaResponseString = '';
+        console.log('Status Code: ' + res.statusCode);
+
+        if (res.statusCode != 200) {
+            tideResponseCallback(new Error("Non 200 Response"));
+            console.log("hey I'm before API call error");
+        }
+
+        res.on('data', function (data) {
+            noaaResponseString += data;
+         console.log("3. hey I'm before API call on data");   
+        });
+
+        res.on('end', function () {
+
+            console.log("4 .hey I'm before API call end success");
+             FxResponseCallback(null, noaaResponseString);
+
+        });
+    }).on('error', function (e) {
+        console.log("Communications error: " + e.message);
+        FxResponseCallback(new Error(e.message));
+    });
+}
+
 
 
 function handleConfirmationDialogRequest(intent, session, response) {
