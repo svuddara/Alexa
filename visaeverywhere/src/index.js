@@ -37,7 +37,7 @@
 /**
  * App ID for the skill
  */
-var APP_ID = amzn1.echo-sdk-ams.app.4b2b0eb9-c4fc-4641-bb8a-f17765ab8631;//replace with 'amzn1.echo-sdk-ams.app.[your-unique-value-here]';
+var APP_ID = 'amzn1.echo-sdk-ams.app.4b2b0eb9-c4fc-4641-bb8a-f17765ab8631';//replace with 'amzn1.echo-sdk-ams.app.[your-unique-value-here]';
 
 var http = require('http'),
     alexaDateUtil = require('./alexaDateUtil');
