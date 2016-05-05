@@ -37,7 +37,7 @@
 /**
  * App ID for the skill
  */
-var APP_ID = amzn1.echo-sdk-ams.app.4b2b0eb9-c4fc-4641-bb8a-f17765ab8631;//replace with 'amzn1.echo-sdk-ams.app.[your-unique-value-here]';
+var APP_ID = undefined;//replace with 'amzn1.echo-sdk-ams.app.[your-unique-value-here]';
 
 var http = require('http'),
     alexaDateUtil = require('./alexaDateUtil');
@@ -152,17 +152,26 @@ function handleCityDialogRequest(intent, session, response) {
      var pwd = intent.slots.Everywhere.value;
 
         if(pwd == "test"){
-        getFxRateResponse(intent,session,response);
-        var s = "Done,A conformation email has been sent. Anything else?";
+        // getFxRateResponse(intent,session,function getFxResponseCallBack(err, fxresponse){
+
+        //     if(err){
+        //         console.log("8. hey i'm get response callback error" + err);
+        //     }else{
+        //         console.log("8.1.hey i'm get response callback success" + fxresponse);
+        //     }
+        //     console.log("9. hey i'm get response callback after error and success" + fxresponse);
+
+        // });
+        var s = "Done,A confirmation email has been sent. Anything else?";
         response.ask(s);
         console.log("8. last...");
         }
 
 
-        if(pwd == "yes"){
-        var s1 = "what do you want me to look for?";
-        response.ask(s1);
-        }
+        // if(pwd == "yes"){
+        // var s1 = "what do you want me to look for?";
+        // response.ask(s1);
+        // }
 
 
         if(pwd == "tickets"){
@@ -170,22 +179,22 @@ function handleCityDialogRequest(intent, session, response) {
         response.ask(s2);
         }
 
-        if(pwd == "get them"){
+        if(pwd == "yes"){
         var s3 = "Done. You got it.";
         response.ask(s3);
         }
 
-        if(pwd == "thanks"){
+        if(pwd == "thankyou"){
             var s4 = "Have a good one. Bye";
             response.tell(s4);
         }
         // if we received a value for the incorrect city, repeat it to the user, otherwise we received an empty slot
-        var speechOutput = "Sent one time password to your mobile.Please repeat the password";
+        var speechOutput = "Sent one time password to your mobile. Please repeat the password";
         response.ask(speechOutput);
         return;
 }
 
-function getFxRateResponse(intent,session, response) {
+ function getFxRateResponse(intent,session, getFxResponseCallBack) {
 
     //response.tell("I'm in getFxRateResponse");
     console.log(" 1. hey I'm in getFxRateResponse"); 
@@ -196,15 +205,18 @@ function getFxRateResponse(intent,session, response) {
         console.log("5. hey i'm callback");
         if (err) {
             speechOutput = "Sorry, Fx rate conversion failed";
-            console.log("6. hey i'm callback error");
+            console.log("6. hey i'm callback error" + err);
+            getFxResponseCallBack(new Error(err));
         } else {
             //speechOutput = highTideResponse;
             speechOutput = "hey I got the response";
             console.log("6.b. hey i'm callback success");
+            getFxResponseCallBack(null, noaaResponseString);
         }
 
         //esponse.tellWithCard(speechOutput, "VisaEverywhere", speechOutput);
         console.log("7. hey I'm in make makeFxRequest end....." + highTideResponse);
+          getFxResponseCallBack(null, noaaResponseString);
     });
 }
 
@@ -214,7 +226,7 @@ function makeFxRequest(intent,session, FxResponseCallback) {
     var queryString = '?base=USD';
      console.log("2. hey I'm before API call");
 
-    http.get(endpoint + queryString, function (res) {
+    http.get(endpoint + queryString, function (res) {[]
         var noaaResponseString = '';
         console.log('Status Code: ' + res.statusCode);
 
